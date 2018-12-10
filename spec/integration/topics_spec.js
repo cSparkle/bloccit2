@@ -52,6 +52,13 @@ describe('routes : topics', () => {
                 description: "What's your favorite Blink-182 song?"
             }
         };
+        const otherOptions = {
+            url: `${base}create`,
+            form: {
+                title: 'a',
+                description: 'b'
+            }
+        };
 
         it('should create a new topic and redirect', (done) => {
             request.post(options, (err, res, body) => {
@@ -59,6 +66,18 @@ describe('routes : topics', () => {
                     expect(res.statusCode).toBe(303);
                     expect(topic.title).toBe('Blink-182 songs');
                     expect(topic.description).toBe("What's your favorite Blink-182 song?");
+                    done();
+                }).catch((err) => {
+                    console.log(err);
+                    done();
+                });
+            });
+        });
+
+        it('should not create a new topic that fails validations', (done) => {
+            request.post(otherOptions, (err, res, body) => {
+                Topic.findOne({where: {title: 'a'}}).then((topic) => {
+                    expect(topic).toBeNull();
                     done();
                 }).catch((err) => {
                     console.log(err);
